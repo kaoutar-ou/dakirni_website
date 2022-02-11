@@ -16,7 +16,7 @@ function MyMapComponent({ center, zoom, forms }) {
   const colors = ["#6FFF63","#FFD263","#FF0000"];
   const ref = useRef();
 
-  let danger = 0;
+  // let danger = 0;
 
   // let forms = [[{}]];
 
@@ -24,54 +24,60 @@ function MyMapComponent({ center, zoom, forms }) {
 
   useEffect(() => {
     
-    if(forms !== undefined && forms[0] !== undefined && forms[0][0] !== undefined) {
+   
     const map = new window.google.maps.Map(ref.current, {
       center,
       zoom
     });
 
+    if(forms !== undefined && forms[0] !== undefined && forms[0][0] !== undefined) {
+
     // console.log("forms[0]");
-    // console.log(forms[0][0]);
+    // console.log("forms[0][0]",forms[0]);
     // console.log(forms[1]);
     // console.log(forms[2]);
     
 
-    const greenZoneCoords = forms[0][0];
+    const greenZoneCoords = forms[0];
   
-    const yellowZoneCoords = forms[1][1];
+    const yellowZoneCoords = forms[1];
 
-    const redZoneCoords = forms[2][2]
+    const redZoneCoords = forms[2];
 
     // Construct the polygon.
     const greenZone = new window.google.maps.Polygon({
       paths: greenZoneCoords,
       strokeColor: colors[0],
-      strokeOpacity: 0.8,
+      strokeOpacity: 1,
       strokeWeight: 2,
       fillColor: colors[0],
       fillOpacity: 0.35,
     });
-    greenZone.setMap(map);
+    
 
     const yellowZone = new window.google.maps.Polygon({
       paths: yellowZoneCoords,
       strokeColor: colors[1],
-      strokeOpacity: 0.8,
+      strokeOpacity: 1,
       strokeWeight: 2,
       fillColor: colors[1],
-      fillOpacity: 0.35,
+      fillOpacity: 0.25,
     });
-    yellowZone.setMap(map);
+    
 
     const redZone = new window.google.maps.Polygon({
       paths: redZoneCoords,
       strokeColor: colors[2],
-      strokeOpacity: 0.8,
+      strokeOpacity: 1,
       strokeWeight: 2,
       fillColor: colors[2],
-      fillOpacity: 0.35,
+      fillOpacity: 0.15,
     });
+
+    
     redZone.setMap(map);
+    yellowZone.setMap(map);
+    greenZone.setMap(map);
   }
   }, [forms]);
 
@@ -87,8 +93,13 @@ function MyMapComponent({ center, zoom, forms }) {
 }
 
 const Map = () => {
-  
+  let res = [];
+  useEffect(() => {
+    res = Services.getSafeZone();
+  }, []);
+
   let navigate = useNavigate();
+  // const res = Services.getSafeZone();
   const center = { lat: 31.643478, lng: -8.021075 };
   const zoom = 17;
   // const [coords, setCoords] = useState([]);
@@ -97,6 +108,7 @@ const Map = () => {
   // console.log("c=>", coords);
   const forms = useSelector((state) => state.reducer.safezone, shallowEqual);
   
+  console.log("forms map", forms);
 
   return (
     <Wrapper

@@ -12,8 +12,9 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import logo from '../white_logo.png'
+import { useNavigate } from "react-router-dom";
 
-const pages = ['Home', 'Map'];
+const pages = ['home', 'map'];
 const settings = ['Profile', 'Logout'];
 
 const Navbar = () => {
@@ -34,6 +35,8 @@ const Navbar = () => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  let navigate = useNavigate();
 
   return (
     <AppBar position="static" color="primary">
@@ -78,7 +81,7 @@ const Navbar = () => {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                <MenuItem key={page} onClick={() => {navigate("/"+page);}}>
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
               ))}
@@ -96,7 +99,7 @@ const Navbar = () => {
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={handleCloseNavMenu}
+                onClick={() => {navigate("/"+page);}}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
                 {page}

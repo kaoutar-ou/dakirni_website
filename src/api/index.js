@@ -1,5 +1,8 @@
 import axios from "./axios";
 
-const safeZone = "setsafezone";
+const setSafeZoneUrl = "safezone/setsafezone";
+const getSafeZoneUrl = "safezone/getsafezone";
 
-export const setSafeZone = (data) => axios.post(safeZone, data);
+export const setSafeZone = (data) => axios.post(setSafeZoneUrl, data);
+export const getSafeZone = () => axios.get(getSafeZoneUrl);
+
