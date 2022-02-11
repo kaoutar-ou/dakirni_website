@@ -1,14 +1,14 @@
-export default (state = { messages: [] }, action) => {
+const Reducer = (state = { }, action) => {
     switch (action.type) {
-      case "GET_RESPONSE":
-        console.log("Get response", action.payload);
+      case "SET_SAFEZONE":
+        console.log("Set safezone", action.payload);
         const stt = {
           ...state,
-          messages: state.messages.concat(action.payload),
+          safezone: action.payload,
         };
         return stt;
       default:
         return state;
     }
   };
-  
+  export default Reducer;

@@ -1,10 +1,9 @@
-
-
-
-
 import React, { useEffect, useRef, useState } from "react";
 import { Wrapper, Status } from "@googlemaps/react-wrapper";
 import { useNavigate } from "react-router-dom";
+import * as Services from "../services/index.js";
+import SetSafeZone from './modals/SetSafeZone.jsx';
+import MaxSafeZoneWarning from './modals/MaxSafeZoneWarning.jsx'
 
 const render = (status) => {
   if (status === Status.LOADING) return <h3>{status} ..</h3>;
@@ -12,110 +11,99 @@ const render = (status) => {
   return null;
 };
 
-function MyMapComponent({ center, zoom, onPolygon, onFormAdd }) {
+function MyMapComponent({ center, zoom, onPolygon, onFormAdd, handleMaxWarning }) {
 
-    // const [danger, setDanger] = useState(0);
-    const colors = ["#6FFF63","#FFD263","#FF0000"];
+  const colors = ["#6FFF63","#FFD263","#FF0000"];
   const ref = useRef();
 
+  
+
+  let danger = 0;
+  
+  
   useEffect(() => {
-      let danger = 0;
+    
     const map = new window.google.maps.Map(ref.current, {
       center,
       zoom
     });
-    const drawingManager = new window.google.maps.drawing.DrawingManager({
-      drawingMode: window.google.maps.drawing.OverlayType.POLYGON,
-      // drawingControl: false,
-      drawingControlOptions: {
-        position: window.google.maps.ControlPosition.TOP_CENTER,
-        drawingModes: [
-          // window.google.maps.drawing.OverlayType.MARKER,
-          // window.google.maps.drawing.OverlayType.CIRCLE,
-          window.google.maps.drawing.OverlayType.POLYGON,
-          // window.google.maps.drawing.OverlayType.POLYLINE,
-          // window.google.maps.drawing.OverlayType.RECTANGLE,
-        ],
-      },
-    });
 
-    // const triangleCoords = [
-    //   { lat: 25.774, lng: -80.19 },
-    //   { lat: 18.466, lng: -66.118 },
-    //   { lat: 32.321, lng: -64.757 },
-    //   { lat: 25.774, lng: -80.19 },
-    // ];
-  
-    // // Construct the polygon.
-    // const bermudaTriangle = new window.google.maps.Polygon({
-    //   paths: triangleCoords,
-    //   strokeColor: "#FF0000",
-    //   strokeOpacity: 0.8,
-    //   strokeWeight: 2,
-    //   fillColor: "#FF0000",
-    //   fillOpacity: 0.35,
-    // });
-  
-    // bermudaTriangle.setMap(map);
-
-    drawingManager.setMap(map);
-
-    window.google.maps.event.addListener(
-      drawingManager,
-      "overlaycomplete",
-      function (event) {
-        console.log(event);
-        const polygonCoordinates = event.overlay.latLngs
-          .getArray()
-          .map((it) =>
-            it
-              .getArray()
-              .map((point) => [point.toJSON().lng, point.toJSON().lat])
-          );
-        onPolygon(polygonCoordinates);
-
-        let points = [];
-        polygonCoordinates[0].map((i) => points.push({ lat: i[1], lng: i[0] }));
-        console.log(points);
-
-        // onFormAdd(points);
-        switch (danger) {
-            case 0:
-                onFormAdd({0 : points});
-                break;
-            case 1:
-                onFormAdd({1 : points});
-                break;
-            case 2:
-                onFormAdd({2 : points});
-                break;
-            default:
-                break;
-        }
-        
-        
-        // console.log(danger);
-        // setDanger(1);
-
-        // console.log(polygonCoordinates[0].length);
-        const form = new window.google.maps.Polygon({
-            paths: [points],
-            strokeColor: colors[danger],
-            strokeOpacity: 0.8,
-            strokeWeight: 3,
-            fillColor: colors[danger],
-            fillOpacity: 0.25,
-        });
-        danger++;
-        console.log(danger);
-        form.setMap(map);
-      }
-    );
     
-    // window.google.maps.event.addListener(drawingManager, 'click', function() {
-    //   this.setMap(null);
-    // });
-  }, []);
+      const drawingManager = new window.google.maps.drawing.DrawingManager({
+        drawingMode: window.google.maps.drawing.OverlayType.POLYGON,
+        drawingControlOptions: {
+          position: window.google.maps.ControlPosition.TOP_CENTER,
+          drawingModes: [
+            window.google.maps.drawing.OverlayType.POLYGON,
+          ],
+        },
+      });
+
+      
+      drawingManager.setMap(map);
+
+      if (danger < 3) {
+      window.google.maps.event.addListener(
+        drawingManager,
+        "overlaycomplete",
+        function (event) {
+          console.log(event);
+          const polygonCoordinates = event.overlay.latLngs
+            .getArray()
+            .map((it) =>
+              it
+                .getArray()
+                .map((point) => [point.toJSON().lng, point.toJSON().lat])
+            );
+          onPolygon(polygonCoordinates);
+
+          let points = [];
+          polygonCoordinates[0].map((i) => points.push({ lat: i[1], lng: i[0] }));
+          console.log(points);
+
+          // onFormAdd(points);
+          switch (danger) {
+              case 0:
+                  onFormAdd({0 : points});
+                  break;
+              case 1:
+                  onFormAdd({1 : points});
+                  break;
+              case 2:
+                  onFormAdd({2 : points});
+                  drawingManager.setOptions({
+                    drawingControl: false
+                  });
+                  handleMaxWarning();
+                  drawingManager.setMap(null);
+                  break;
+              default:
+                  break;
+          }
+          
+          const form = new window.google.maps.Polygon({
+              paths: [points],
+              strokeColor: colors[danger],
+              strokeOpacity: 0.8,
+              strokeWeight: 3,
+              fillColor: colors[danger],
+              fillOpacity: 0.25,
+          });
+          danger++;
+          console.log(danger);
+          form.setMap(map);
+        }
+      );
+    
+    }
+
+    if(danger>=3) {
+      drawingManager.setOptions({
+        drawingControl: false
+      });
+      drawingManager.setMap(map);
+    }
+    }, []);
 
   return (
     <div
@@ -128,18 +116,44 @@ function MyMapComponent({ center, zoom, onPolygon, onFormAdd }) {
   );
 }
 
-const EditMap = () => {
-    
-    let navigate = useNavigate();
-    const center = { lat: 21.4498898, lng: 38.930965 };
-  const zoom = 4;
+
+
+const EditMap = () => {  
+  let navigate = useNavigate();
+  const center = { lat: 31.643478, lng: -8.021075 };
+  const zoom = 17;
   const [coords, setCoords] = useState([]);
   const [forms, setForms] = useState([]);
   let points = [];
-//   const [num, setNum] = useState(0);
-// let num = 0;
-  console.log("c=>", coords);
 
+  const [openSet, setOpenSet] = React.useState(false);
+  const handleOpenSet = () => setOpenSet(true);
+  const handleCloseSet = () => setOpenSet(false);
+
+  const setSafeZone = () => {
+    console.log("setsafezone edit map")
+    console.log(forms);
+    Services.setSafeZone(forms);
+    handleCloseSet();
+    navigate("/map");
+  }
+
+
+  const [openMaxWarning, setOpenMaxWarning] = React.useState(false);
+
+  const handleMaxWarning = () => {
+    setOpenMaxWarning(true);
+  };
+
+  const handleCloseMaxWarning = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenMaxWarning(false);
+  };
+
+
+  console.log("c=>", coords);
   return (
     <Wrapper
       libraries={["drawing"]}
@@ -154,24 +168,20 @@ const EditMap = () => {
         center={center}
         zoom={zoom}
         onFormAdd={(formCoords) => {
-            // formCoords.map((i) => points.push(i));
             points.push(formCoords);
             setForms(points);
-            // points = [];
-            // num++;
-        }}  
+        }}
+        handleMaxWarning={handleMaxWarning}
       />
-      <pre>{JSON.stringify(coords, null, 2)}</pre>
- 
-
-      <button onClick={() => {navigate("/map");}}>Save</button>
-
+      {/* <pre>{JSON.stringify(coords, null, 2)}</pre> */}
+      <SetSafeZone handleOpenSet={handleOpenSet} handleCloseSet={handleCloseSet} openSet={openSet} setSafeZone={setSafeZone}/>
+      <MaxSafeZoneWarning openMaxWarning={openMaxWarning} handleCloseMaxWarning={handleCloseMaxWarning}/>
+      <button onClick={handleOpenSet}>Save</button>
+      {/* <button onClick={() => {navigate("/map");}}>Save</button> */}
       {/* <button onClick={() => {console.log(forms)}}>Save</button> */}
       {/* <button onClick={() => {console.log(forms[0])}}>Save</button> */}
     </Wrapper>
   );
-
 }
-  
-  
-  export default EditMap;
+
+export default EditMap;

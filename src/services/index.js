@@ -1,28 +1,21 @@
 import { store } from "../reducers/store.js";
-import { getRes } from "../api/index.js";
+import * as api from "../api/index.js";
 
-const getResponse = async (query) => {
-    var message = {
-     
-    };
+export const setSafeZone = async (req) => {
+    let safeZone = req;
 
-    const request = {
-      data: {
-        sessionId: "123456789",
-        languageCode: "en",
-        query: query,
-      },
-    };
+    let res = {}
+
     try {
-      const res = await getRes(request);
-     
+      res = await api.setSafeZone(safeZone);
     } catch (err) {
       console.log(err);
     }
 
     store.dispatch({
-      type: "GET_RESPONSE",
-      payload: message,
+      type: "SET_SAFEZONE",
+      payload: safeZone,
     });
-    return message;
+    return res;
   };
+
