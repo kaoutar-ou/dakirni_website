@@ -96,6 +96,13 @@ const Map = () => {
   let res = [];
   useEffect(() => {
     res = Services.getSafeZone();
+    // let i = 0;
+    // if(i===0){
+    //   window.location.reload()
+    //   i++;
+    // }else {
+    //   window.location.reload(false)
+    // }
   }, []);
 
   let navigate = useNavigate();
