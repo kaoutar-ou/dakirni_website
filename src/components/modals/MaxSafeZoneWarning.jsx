@@ -12,6 +12,7 @@ const MaxSafeZoneWarning = ({openMaxWarning, handleCloseMaxWarning}) => {
 
   return (
     <Stack spacing={2} sx={{ width: "100%" }}>
+      
       {/* <Button variant="outlined" onClick={handleMaxWarning}>
         Open success snackbar
       </Button> */}

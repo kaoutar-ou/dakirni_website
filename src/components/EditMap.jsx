@@ -3,7 +3,11 @@ import { Wrapper, Status } from "@googlemaps/react-wrapper";
 import { useNavigate } from "react-router-dom";
 import * as Services from "../services/index.js";
 import SetSafeZone from './modals/SetSafeZone.jsx';
-import MaxSafeZoneWarning from './modals/MaxSafeZoneWarning.jsx'
+import MaxSafeZoneWarning from './modals/MaxSafeZoneWarning.jsx';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 
 const render = (status) => {
   if (status === Status.LOADING) return <h3>{status} ..</h3>;
@@ -176,7 +180,33 @@ const EditMap = () => {
       {/* <pre>{JSON.stringify(coords, null, 2)}</pre> */}
       <SetSafeZone handleOpenSet={handleOpenSet} handleCloseSet={handleCloseSet} openSet={openSet} setSafeZone={setSafeZone}/>
       <MaxSafeZoneWarning openMaxWarning={openMaxWarning} handleCloseMaxWarning={handleCloseMaxWarning}/>
-      <button onClick={handleOpenSet}>Save</button>
+      {/* <button onClick={handleOpenSet}>Save</button> */}
+      <Grid
+        container
+        spacing={0}
+        direction="column"
+        alignItems="center"
+        justifyContent="center"
+        style={{ minHeight: '10vh', backgroundColor: '#1976d2' }}
+      >
+        <Stack spacing={7} direction="row" style={{ minHeight: '4vh' }}>
+          <Button variant="contained" style={{ backgroundColor: '#ffffff', width:"13vh" }} onClick={handleOpenSet}>
+            <Typography id="modal-modal-title" color="#1976d2" >
+              Save
+            </Typography>
+          </Button>
+          <Button variant="contained" style={{ backgroundColor: '#ffffff', width:"13vh" }} onClick={()=>{window.location.reload(false);}}>
+            <Typography id="modal-modal-title" color="#1976d2" >
+              Refresh
+            </Typography>
+          </Button>
+          <Button variant="contained" style={{ backgroundColor: '#ffffff', width:"13vh" }} onClick={() => {navigate("/map");}}>
+            <Typography id="modal-modal-title" color="#1976d2" >
+              Cancel
+            </Typography>
+          </Button>
+        </Stack>
+      </Grid>
       {/* <button onClick={() => {navigate("/map");}}>Save</button> */}
       {/* <button onClick={() => {console.log(forms)}}>Save</button> */}
       {/* <button onClick={() => {console.log(forms[0])}}>Save</button> */}

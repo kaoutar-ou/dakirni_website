@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Grid';
 
 const style = {
   position: 'absolute',
@@ -29,15 +30,24 @@ const SetSafeZone = ({handleOpenSet, handleCloseSet, openSet, setSafeZone}) => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-                Confirm Safe Zone ?
-            </Typography>
-            <Stack spacing={2} direction="row" >
-                <Button variant="contained" onClick={setSafeZone}>Confirm</Button>
-                <Button variant="contained" onClick={handleCloseSet}>cancel</Button>
-            </Stack>
-        </Box>
+          <Box sx={style}>
+              <Grid
+                container
+                spacing={0}
+                direction="column"
+                alignItems="center"
+                justifyContent="center"
+                // style={{ minHeight: '100vh' }}
+              >
+                <Typography id="modal-modal-title" variant="h6" component="h2" style={{ minHeight: '7vh' }}>
+                  Confirm Safe Zone ?
+                </Typography>
+                <Stack spacing={2} direction="row" style={{ minHeight: '5vh' }}>
+                    <Button variant="contained" onClick={setSafeZone}>Confirm</Button>
+                    <Button variant="contained" onClick={handleCloseSet}>cancel</Button>
+                </Stack>
+              </Grid>
+          </Box>
       </Modal>
     </div>
   );

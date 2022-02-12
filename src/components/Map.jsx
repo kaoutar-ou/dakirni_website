@@ -3,6 +3,10 @@ import { Wrapper, Status } from "@googlemaps/react-wrapper";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import * as Services from "../services/index.js"
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 
 
 const render = (status) => {
@@ -140,7 +144,33 @@ const Map = () => {
       
       {/* <pre>{JSON.stringify(forms, null, 2)}</pre> */}
       {/* <pre>{JSON.stringify(coords, null, 2)}</pre> */}
+      {/* <Grid
+        container
+        spacing={0}
+        direction="column"
+        alignItems="center"
+        justifyContent="center"
+        // style={{ minHeight: '100vh' }}
+      >
       <button onClick={() => {navigate("/editmap");}}>Save</button>
+      </Grid> */}
+
+      <Grid
+        container
+        spacing={0}
+        direction="column"
+        alignItems="center"
+        justifyContent="center"
+        style={{ minHeight: '10vh', backgroundColor: '#1976d2' }}
+      >
+        <Stack spacing={7} direction="row" style={{ minHeight: '4vh' }}>
+          <Button variant="contained" style={{ backgroundColor: '#ffffff', width:"23vh" }} onClick={() => {navigate("/editmap");}}>
+            <Typography id="modal-modal-title" color="#1976d2" >
+              Update safe zone
+            </Typography>
+          </Button>
+        </Stack>
+      </Grid>
     </Wrapper>
   );
 

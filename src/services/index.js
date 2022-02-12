@@ -78,10 +78,15 @@ export const setSafeZone = async (req) => {
       console.log(err);
     }
 
-    // store.dispatch({
-    //   type: "SET_SAFEZONE",
-    //   payload: safeZone,
-    // });
+    console.log("safeZone request");
+    console.log(request);
+    let array = [request[0][0], request[1][1], request[2][2]];
+    console.log(array);
+
+    store.dispatch({
+      type: "SET_SAFEZONE",
+      payload: array,
+    });
 
     console.log("res setSafeZone");
     console.log(res);
