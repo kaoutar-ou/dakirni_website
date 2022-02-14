@@ -8,6 +8,7 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
 
 const render = (status) => {
   if (status === Status.LOADING) return <h3>{status} ..</h3>;
@@ -134,10 +135,12 @@ const EditMap = () => {
   const handleOpenSet = () => setOpenSet(true);
   const handleCloseSet = () => setOpenSet(false);
 
+  const fatherKey = useSelector((state) => state.reducer.fatherKey, shallowEqual);
+
   const setSafeZone = () => {
     console.log("setsafezone edit map")
     console.log(forms);
-    Services.setSafeZone(forms);
+    Services.setSafeZone(forms, fatherKey);
     handleCloseSet();
     navigate("/map");
   }

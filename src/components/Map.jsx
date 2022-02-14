@@ -212,6 +212,12 @@ const Map = () => {
       console.log("locationInfos.latitude");
       console.log(locationInfos.latitude);
     });
+    if (!inside) {
+      console.log("not inside");
+    }
+    else {
+      console.log("inside");
+    }
   }
 
   let navigate = useNavigate();
