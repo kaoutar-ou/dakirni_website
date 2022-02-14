@@ -3,6 +3,7 @@ import './App.css';
 import Map from './components/Map.jsx';
 import EditMap from './components/EditMap.jsx'
 import Navbar from './components/Navbar.jsx'
+import AuthPage from './components/AuthPage.jsx'
 import { Routes, Route, Link } from "react-router-dom";
 
 const App = () => {
@@ -13,10 +14,10 @@ const App = () => {
       </header> */}
       <Navbar />
       <Routes>
+        <Route path="auth" element={<AuthPage />} />
         <Route path="map" element={<Map />} />
         <Route path="editmap" element={<EditMap />} />
       </Routes>
-
     </div>
   );
 }
