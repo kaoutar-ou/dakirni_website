@@ -67,7 +67,7 @@ const render = (status) => {
   return null;
 };
 
-function MyMapComponent({ zoom, forms, location }) {
+function MyMapComponent({ zoom, forms, location, setInside }) {
 
   const colors = ["#6FFF63","#FFD263","#FF0000"];
   const ref = useRef();
@@ -144,8 +144,12 @@ function MyMapComponent({ zoom, forms, location }) {
 
     let point = new Point(31.643478, -8.021075);
     console.log("point",point);
-    if(isInside(redPolygon, point)) {
-      console.log("is insideee");
+    if(!isInside(redPolygon, point)) {
+      // console.log("is insideee");
+      setInside(false);
+    }
+    else {
+      setInside(true);
     }
   }
 
@@ -176,6 +180,7 @@ function MyMapComponent({ zoom, forms, location }) {
   );
 }
 
+
 const Map = () => {
   let res = [];
   useEffect(() => {
@@ -188,9 +193,16 @@ const Map = () => {
     // }else {
     //   window.location.reload(false)
     // }
+    if (!inside) {
+      console.log("not inside");
+    }
+    else {
+      console.log("inside");
+    }
   }, []);
 
   let [location , setLocation] = useState();
+  const [inside , setInside] = useState(true);
 
   const getFatherLocation = () => {
     const databaseRef = ref(database, 'location/user_id/father_id');
@@ -200,6 +212,12 @@ const Map = () => {
       console.log("locationInfos.latitude");
       console.log(locationInfos.latitude);
     });
+    if (!inside) {
+      console.log("not inside");
+    }
+    else {
+      console.log("inside");
+    }
   }
 
   let navigate = useNavigate();
@@ -245,6 +263,7 @@ const Map = () => {
         zoom={zoom}
         forms={forms}
         location={location}
+        setInside={setInside}
       />
       
       {/* <pre>{JSON.stringify(forms, null, 2)}</pre> */}

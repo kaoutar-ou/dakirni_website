@@ -1,7 +1,7 @@
 import { store } from "../reducers/store.js";
 import * as api from "../api/index.js";
 
-export const setSafeZone = async (req) => {
+export const setSafeZone = async (req, fatherKey) => {
     let request = req;
 
     let res = {}
@@ -68,7 +68,8 @@ export const setSafeZone = async (req) => {
           "red" : {
               "lat" : redLat,
               "lng" : redLng
-          }
+          },
+          fatherKey : fatherKey
       }
     }
 
@@ -93,13 +94,13 @@ export const setSafeZone = async (req) => {
     return res;
   };
 
-  export const getSafeZone = async () => {
+  export const getSafeZone = async (fatherKey) => {
     // let safeZone = req;
 
     let res = {}
 
     try {
-      res = await api.getSafeZone();
+      res = await api.getSafeZone(fatherKey);
       console.log(res)
     } catch (err) {
       console.log(err);
