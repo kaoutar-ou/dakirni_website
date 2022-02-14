@@ -105,6 +105,9 @@ export const setSafeZone = async (req) => {
       console.log(err);
     }
 
+      console.log("res");
+      console.log(res);
+
     console.log("res.data");
     console.log(res.data);
 
