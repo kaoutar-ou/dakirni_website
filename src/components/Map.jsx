@@ -8,6 +8,56 @@ import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
+import { getDatabase, ref, onValue} from "firebase/database";
+import database from '../services/firebase.js';
+
+// // import { initializeApp } from 'firebase/app';
+// // import * as db from 'firebase/database';
+
+// import firebase from 'firebase';
+
+// // import Firebase from 'firebase';
+// // import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
+
+// // Web app's Firebase configuration
+// const firebaseConfig = {
+//   apiKey: "AIzaSyCSic3jmsL-pJZiZz4Wwa2QJLwwSios684",
+//   authDomain: "dakirni.firebaseapp.com",
+//   databaseURL: "https://dakirni-default-rtdb.firebaseio.com",
+//   projectId: "dakirni",
+//   storageBucket: "dakirni.appspot.com",
+//   messagingSenderId: "744400890347",
+//   appId: "1:744400890347:web:dc2b4c92977e25663411ae"
+// };
+
+// // firebase.initializeApp(firebaseConfig);
+// // let database = firebase.database();
+
+// // Initialize Firebase
+// // const app = initializeApp(firebaseConfig);
+// // Firebase.initializeApp(firebaseConfig);
+
+// // const getFatherLocation = () => {
+// //   let ref = app.database().ref("/");
+// //   let state;
+// //   ref.on("value", snapshot => {
+// //     state = snapshot.val();
+// //     // this.setState(state);
+// //   });
+// //   console.log("state");
+// //   console.log(state);
+// // };
+
+// // let ref = Firebase.database().ref("/");
+
+// // const db = getFirestore(app);
+
+// // async function getCities(db) {
+// //   const citiesCol = collection(db, 'cities');
+// //   const citySnapshot = await getDocs(citiesCol);
+// //   const cityList = citySnapshot.docs.map(doc => doc.data());
+// //   return cityList;
+// // }
 
 const render = (status) => {
   if (status === Status.LOADING) return <h3>{status} ..</h3>;
@@ -15,20 +65,15 @@ const render = (status) => {
   return null;
 };
 
-function MyMapComponent({ center, zoom, forms }) {
+function MyMapComponent({ zoom, forms, location }) {
 
   const colors = ["#6FFF63","#FFD263","#FF0000"];
   const ref = useRef();
 
-  // let danger = 0;
-
-  // let forms = [[{}]];
-
-  
-
   useEffect(() => {
+
+    let center = (location !== undefined && location != null) ? { lat: location.latitude, lng: location.longitude } : { lat: 34.643478, lng: -9.021075 };
     
-   
     const map = new window.google.maps.Map(ref.current, {
       center,
       zoom
@@ -38,9 +83,6 @@ function MyMapComponent({ center, zoom, forms }) {
 
     // console.log("forms[0]");
     // console.log("forms[0][0]",forms[0]);
-    // console.log(forms[1]);
-    // console.log(forms[2]);
-    
 
     const greenZoneCoords = forms[0];
   
@@ -57,7 +99,6 @@ function MyMapComponent({ center, zoom, forms }) {
       fillColor: colors[0],
       fillOpacity: 0.35,
     });
-    
 
     const yellowZone = new window.google.maps.Polygon({
       paths: yellowZoneCoords,
@@ -67,7 +108,6 @@ function MyMapComponent({ center, zoom, forms }) {
       fillColor: colors[1],
       fillOpacity: 0.25,
     });
-    
 
     const redZone = new window.google.maps.Polygon({
       paths: redZoneCoords,
@@ -77,13 +117,27 @@ function MyMapComponent({ center, zoom, forms }) {
       fillColor: colors[2],
       fillOpacity: 0.15,
     });
-
-    
+   
     redZone.setMap(map);
     yellowZone.setMap(map);
     greenZone.setMap(map);
   }
-  }, [forms]);
+
+  console.log("location component");
+  console.log(location);
+  if (location !== undefined && location != null) {
+    var myLatlng = new window.google.maps.LatLng(location.latitude, location.longitude);
+    // var myLatlng = new window.google.maps.LatLng(31.6469904,-8.0129456);
+    var marker = new window.google.maps.Marker({
+      position: myLatlng,
+      title:"Father Location"
+    });
+
+    // To add the marker to the map, call setMap();
+    marker.setMap(map);
+  }
+
+  }, [forms, location]);
 
   return (
     <div
@@ -100,6 +154,7 @@ const Map = () => {
   let res = [];
   useEffect(() => {
     res = Services.getSafeZone();
+    getFatherLocation();
     // let i = 0;
     // if(i===0){
     //   window.location.reload()
@@ -109,14 +164,29 @@ const Map = () => {
     // }
   }, []);
 
+  let [location , setLocation] = useState();
+
+  const getFatherLocation = () => {
+    // const locationRef = database.ref("location").child("user_id").child("father_id");
+    // locationRef.on('value', (snapshot) => {
+    //     const locationInfos = snapshot.val();
+    //     console.log(locationInfos);
+    // });
+    const databaseRef = ref(database, 'location/user_id/father_id');
+    onValue(databaseRef, (snapshot) => {
+      const locationInfos = snapshot.val();
+      setLocation(locationInfos);
+      
+      console.log("locationInfos.latitude");
+      console.log(locationInfos.latitude);
+      // updateStarCount(postElement, data);
+    });
+
+  }
+
   let navigate = useNavigate();
-  // const res = Services.getSafeZone();
-  const center = { lat: 31.643478, lng: -8.021075 };
+  // const center = { lat: 31.643478, lng: -8.021075 };
   const zoom = 17;
-  // const [coords, setCoords] = useState([]);
-  // const [forms, setForms] = useState([]);
-  // let points = [];
-  // console.log("c=>", coords);
   const forms = useSelector((state) => state.reducer.safezone, shallowEqual);
   
   console.log("forms map", forms);
@@ -129,31 +199,13 @@ const Map = () => {
     >
       
       <MyMapComponent
-        // onPolygon={(polygonCoordinates) => {
-        //   console.log("onPolygon", polygonCoordinates);
-        //   setCoords([coords, polygonCoordinates]);
-        // }}
-        center={center}
+        // center={center}
         zoom={zoom}
         forms={forms}
-        // onFormAdd={(formCoords) => {
-        //     points.push(formCoords);
-        //     setForms(points);
-        // }}  
+        location={location}
       />
       
       {/* <pre>{JSON.stringify(forms, null, 2)}</pre> */}
-      {/* <pre>{JSON.stringify(coords, null, 2)}</pre> */}
-      {/* <Grid
-        container
-        spacing={0}
-        direction="column"
-        alignItems="center"
-        justifyContent="center"
-        // style={{ minHeight: '100vh' }}
-      >
-      <button onClick={() => {navigate("/editmap");}}>Save</button>
-      </Grid> */}
 
       <Grid
         container
@@ -164,6 +216,11 @@ const Map = () => {
         style={{ minHeight: '10vh', backgroundColor: '#1976d2' }}
       >
         <Stack spacing={7} direction="row" style={{ minHeight: '4vh' }}>
+          <Button variant="contained" style={{ backgroundColor: '#ffffff', width:"23vh" }} onClick={getFatherLocation}>
+            <Typography id="modal-modal-title" color="#1976d2" >
+              Get Father Location
+            </Typography>
+          </Button>
           <Button variant="contained" style={{ backgroundColor: '#ffffff', width:"23vh" }} onClick={() => {navigate("/editmap");}}>
             <Typography id="modal-modal-title" color="#1976d2" >
               Update safe zone
@@ -175,6 +232,5 @@ const Map = () => {
   );
 
 }
-  
   
   export default Map;
