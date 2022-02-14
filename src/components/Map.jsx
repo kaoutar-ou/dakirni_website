@@ -11,6 +11,8 @@ import Typography from '@mui/material/Typography';
 import { getDatabase, ref, onValue} from "firebase/database";
 import database from '../services/firebase.js';
 
+import {isInside, Point} from "../services/checksafezone.js";
+
 // // import { initializeApp } from 'firebase/app';
 // // import * as db from 'firebase/database';
 
@@ -82,7 +84,7 @@ function MyMapComponent({ zoom, forms, location }) {
     if(forms !== undefined && forms[0] !== undefined && forms[0][0] !== undefined) {
 
     // console.log("forms[0]");
-    // console.log("forms[0][0]",forms[0]);
+    console.log("forms[0]",forms[0]);
 
     const greenZoneCoords = forms[0];
   
@@ -121,6 +123,30 @@ function MyMapComponent({ zoom, forms, location }) {
     redZone.setMap(map);
     yellowZone.setMap(map);
     greenZone.setMap(map);
+
+    let greenPolygon = [];
+    // forms[0].map(form => console.log(form + ","));
+    for(let i=0 ; i<forms[0].length; i++) {
+      // console.log(forms[0][i]);
+      // console.log(forms[0][i].lat);
+      greenPolygon.push(new Point(forms[0][i].lat, forms[0][i].lng));
+    }
+
+    let yellowPolygon = [];
+    for(let i=0 ; i<forms[1].length; i++) {
+      yellowPolygon.push(new Point(forms[1][i].lat, forms[1][i].lng));
+    }
+
+    let redPolygon = [];
+    for(let i=0 ; i<forms[2].length; i++) {
+      redPolygon.push(new Point(forms[2][i].lat, forms[2][i].lng));
+    }
+
+    let point = new Point(31.643478, -8.021075);
+    console.log("point",point);
+    if(isInside(redPolygon, point)) {
+      console.log("is insideee");
+    }
   }
 
   console.log("location component");
@@ -167,21 +193,13 @@ const Map = () => {
   let [location , setLocation] = useState();
 
   const getFatherLocation = () => {
-    // const locationRef = database.ref("location").child("user_id").child("father_id");
-    // locationRef.on('value', (snapshot) => {
-    //     const locationInfos = snapshot.val();
-    //     console.log(locationInfos);
-    // });
     const databaseRef = ref(database, 'location/user_id/father_id');
     onValue(databaseRef, (snapshot) => {
       const locationInfos = snapshot.val();
       setLocation(locationInfos);
-      
       console.log("locationInfos.latitude");
       console.log(locationInfos.latitude);
-      // updateStarCount(postElement, data);
     });
-
   }
 
   let navigate = useNavigate();
@@ -189,7 +207,31 @@ const Map = () => {
   const zoom = 17;
   const forms = useSelector((state) => state.reducer.safezone, shallowEqual);
   
-  console.log("forms map", forms);
+  // console.log("forms map", forms);
+  // console.log("forms[0][0].lat", forms[0][0].lat);
+
+  // let greenPolygon = [];
+  // // forms[0].map(form => console.log(form + ","));
+  // for(let i=0 ; i<forms[0].length; i++) {
+  //   // console.log(forms[0][i]);
+  //   // console.log(forms[0][i].lat);
+  //   greenPolygon.push(new Point(forms[0][i].lat, forms[0][i].lng));
+  // }
+
+  // let yellowPolygon = [];
+  // for(let i=0 ; i<forms[1].length; i++) {
+  //   yellowPolygon.push(new Point(forms[1][i].lat, forms[1][i].lng));
+  // }
+
+  // let redPolygon = [];
+  // for(let i=0 ; i<forms[2].length; i++) {
+  //   redPolygon.push(new Point(forms[2][i].lat, forms[2][i].lng));
+  // }
+
+  // let point = new Point(31.643478, -8.021075);
+  // if(isInside(greenPolygon, point)) {
+  //   console.log("is inside");
+  // }
 
   return (
     <Wrapper
