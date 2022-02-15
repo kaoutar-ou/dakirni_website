@@ -98,9 +98,13 @@ export const setSafeZone = async (req, fatherKey) => {
     // let safeZone = req;
 
     let res = {}
+    let father_key = {
+      "fatherKey" : fatherKey
+    }
 
     try {
-      res = await api.getSafeZone(fatherKey);
+      console.log("fatherKey index",fatherKey);
+      res = await api.getSafeZone(father_key);
       console.log(res)
     } catch (err) {
       console.log(err);
@@ -113,62 +117,64 @@ export const setSafeZone = async (req, fatherKey) => {
     console.log(res.data);
 
 
-    let green_coords = [];
-    let green_length = res.data.green.safezone_lat.length;
-    let green_lat = res.data.green.safezone_lat;
-    let green_lng = res.data.green.safezone_lng;
-    console.log("length");
-    console.log(green_length);
-    for (let i = 0; i < green_length; i++) {
-      green_coords.push({ lat: green_lat[i], lng: green_lng[i] })
+    if(res !== undefined) {
+      let green_coords = [];
+      let green_length = res.data.green.safezone_lat.length;
+      let green_lat = res.data.green.safezone_lat;
+      let green_lng = res.data.green.safezone_lng;
+      console.log("length");
+      console.log(green_length);
+      for (let i = 0; i < green_length; i++) {
+        green_coords.push({ lat: green_lat[i], lng: green_lng[i] })
+      }
+      console.log("green_coords");
+      console.log(green_coords);
+
+
+      let yellow_coords = [];
+      let yellow_length = res.data.yellow.safezone_lat.length;
+      let yellow_lat = res.data.yellow.safezone_lat;
+      let yellow_lng = res.data.yellow.safezone_lng;
+      console.log("length");
+      console.log(yellow_length);
+      for (let i = 0; i < yellow_length; i++) {
+        yellow_coords.push({ lat: yellow_lat[i], lng: yellow_lng[i] })
+      }
+      console.log("yellow_coords");
+      console.log(yellow_coords);
+
+
+      let red_coords = [];
+      let red_length = res.data.red.safezone_lat.length;
+      let red_lat = res.data.red.safezone_lat;
+      let red_lng = res.data.red.safezone_lng;
+      console.log("length");
+      console.log(red_length);
+      for (let i = 0; i < red_length; i++) {
+        red_coords.push({ lat: red_lat[i], lng: red_lng[i] })
+      }
+      console.log("red_coords");
+      console.log(red_coords);
+
+      let safeZone = [];
+      console.log("safe zone");
+
+      safeZone.push(green_coords);
+      safeZone.push(yellow_coords);
+      safeZone.push(red_coords);
+
+      console.log("safeZone");
+      console.log(safeZone);
+      // green_lat.map((i) => green_coords.push({ lat: i[1], lng: i[0] }));
+
+      // safeZone = [
+      //   []
+      // ]
+
+      store.dispatch({
+        type: "SET_SAFEZONE",
+        payload: safeZone,
+      });
     }
-    console.log("green_coords");
-    console.log(green_coords);
-
-
-    let yellow_coords = [];
-    let yellow_length = res.data.yellow.safezone_lat.length;
-    let yellow_lat = res.data.yellow.safezone_lat;
-    let yellow_lng = res.data.yellow.safezone_lng;
-    console.log("length");
-    console.log(yellow_length);
-    for (let i = 0; i < yellow_length; i++) {
-      yellow_coords.push({ lat: yellow_lat[i], lng: yellow_lng[i] })
-    }
-    console.log("yellow_coords");
-    console.log(yellow_coords);
-
-
-    let red_coords = [];
-    let red_length = res.data.red.safezone_lat.length;
-    let red_lat = res.data.red.safezone_lat;
-    let red_lng = res.data.red.safezone_lng;
-    console.log("length");
-    console.log(red_length);
-    for (let i = 0; i < red_length; i++) {
-      red_coords.push({ lat: red_lat[i], lng: red_lng[i] })
-    }
-    console.log("red_coords");
-    console.log(red_coords);
-
-    let safeZone = [];
-    console.log("safe zone");
-
-    safeZone.push(green_coords);
-    safeZone.push(yellow_coords);
-    safeZone.push(red_coords);
-
-    console.log("safeZone");
-    console.log(safeZone);
-    // green_lat.map((i) => green_coords.push({ lat: i[1], lng: i[0] }));
-
-    // safeZone = [
-    //   []
-    // ]
-
-    store.dispatch({
-      type: "SET_SAFEZONE",
-      payload: safeZone,
-    });
     return res;
   };

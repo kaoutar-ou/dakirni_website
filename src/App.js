@@ -5,19 +5,31 @@ import EditMap from './components/EditMap.jsx'
 import Navbar from './components/Navbar.jsx'
 import AuthPage from './components/AuthPage.jsx'
 import { Routes, Route, Link } from "react-router-dom";
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
 
 const App = () => {
+
+  let fatherKey = useSelector((state) => state.reducer.fatherKey, shallowEqual);
+  console.log("fatherKey app", fatherKey);
+
   return (
     <div className="App">
       {/* <header className="App-header">
         Hi
       </header> */}
-      <Navbar />
-      <Routes>
+      {!fatherKey ? (
+        <Routes>
         <Route path="auth" element={<AuthPage />} />
-        <Route path="map" element={<Map />} />
-        <Route path="editmap" element={<EditMap />} />
       </Routes>
+      ) : (
+        <>
+          <Navbar />
+          <Routes>
+            <Route path="map" element={<Map fatherKey={fatherKey} />} />
+            <Route path="editmap" element={<EditMap />} />
+          </Routes>
+        </>
+      )}
     </div>
   );
 }

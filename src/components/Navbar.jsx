@@ -13,6 +13,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import logo from '../white_logo.png'
 import { useNavigate } from "react-router-dom";
+import { store } from "../reducers/store.js";
 
 const pages = ['home', 'map'];
 const settings = ['Profile', 'Logout'];
@@ -129,11 +130,15 @@ const Navbar = () => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+              
+                <MenuItem key="logout" onClick={() => {store.dispatch({
+        type: "SET_FATHERKEY",
+        payload: null,
+      });
+      navigate("/auth")}}>
+                  <Typography textAlign="center">logout</Typography>
                 </MenuItem>
-              ))}
+              
             </Menu>
           </Box>
         </Toolbar>

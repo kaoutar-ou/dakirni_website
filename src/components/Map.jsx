@@ -72,9 +72,15 @@ function MyMapComponent({ zoom, forms, location, setInside }) {
   const colors = ["#6FFF63","#FFD263","#FF0000"];
   const ref = useRef();
 
+  let center = { lat: 31.643478, lng: -8.021075 };
+
   useEffect(() => {
 
-    let center = (location !== undefined && location != null) ? { lat: location.latitude, lng: location.longitude } : { lat: 34.643478, lng: -9.021075 };
+    
+    if (location !== undefined && location != null) { 
+      center = { lat: location.latitude, lng: location.longitude }
+    }
+    
     
     const map = new window.google.maps.Map(ref.current, {
       center,
@@ -181,10 +187,11 @@ function MyMapComponent({ zoom, forms, location, setInside }) {
 }
 
 
-const Map = () => {
+const Map = ({fatherKey}) => {
   let res = [];
   useEffect(() => {
-    res = Services.getSafeZone();
+    console.log("fatherkey map", fatherKey);
+    res = Services.getSafeZone(fatherKey);
     getFatherLocation();
     // let i = 0;
     // if(i===0){
@@ -205,7 +212,7 @@ const Map = () => {
   const [inside , setInside] = useState(true);
 
   const getFatherLocation = () => {
-    const databaseRef = ref(database, 'location/user_id/father_id');
+    const databaseRef = ref(database, 'location/user_id/'+fatherKey);
     onValue(databaseRef, (snapshot) => {
       const locationInfos = snapshot.val();
       setLocation(locationInfos);
